@@ -1,11 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Bell, CreditCard, Home, Landmark, LogOut, MoreHorizontal, PiggyBank, Send, UserRound } from 'lucide-react';
+import { Bell, CreditCard, FileText, Home, Landmark, LogOut, MoreHorizontal, PiggyBank, Send, UserRound } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: Home },
   { to: '/accounts', label: 'Accounts', icon: CreditCard },
   { to: '/transfers', label: 'Transfers', icon: Send },
   { to: '/loans', label: 'Loans', icon: Landmark },
+  { to: '/savings', label: 'Savings', icon: PiggyBank },
+  { to: '/statements', label: 'Statements', icon: FileText },
   { to: '/notifications', label: 'Notifications', icon: Bell },
   { to: '/profile', label: 'Profile', icon: UserRound },
   { to: '/login', label: 'Logout', icon: LogOut }
@@ -16,7 +18,7 @@ const mobileNavItems = [
   { to: '/accounts', label: 'Accounts', icon: CreditCard },
   { to: '/transfers', label: 'Transfer', icon: Send },
   { to: '/loans', label: 'Loans', icon: Landmark },
-  { to: '/profile', label: 'More', icon: MoreHorizontal }
+  { to: '/more', label: 'More', icon: MoreHorizontal }
 ];
 
 export default function AppShell() {

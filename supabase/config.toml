@@ -1,0 +1,20 @@
+[functions.create-loan-application]
+verify_jwt = true
+
+[functions.submit-loan-application]
+verify_jwt = true
+
+[functions.initiate-internal-transfer]
+verify_jwt = true
+
+[functions.initiate-ecocash-transfer]
+verify_jwt = true
+
+[functions.generate-statement]
+verify_jwt = true
+
+[functions.send-notification]
+verify_jwt = true
+
+[functions.process-payment-webhook]
+verify_jwt = false
