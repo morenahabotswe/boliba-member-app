@@ -13,20 +13,25 @@ export default function DashboardPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loanProducts, setLoanProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     void (async () => {
-      const [accountData, notificationData, txData, loanData] = await Promise.all([
-        accountService.getAccounts(),
-        notificationService.getNotifications(),
-        transactionService.getRecentTransactions(),
-        loanService.getLoanProducts()
-      ]);
+      try {
+        const [accountData, notificationData, txData, loanData] = await Promise.all([
+          accountService.getAccounts(),
+          notificationService.getNotifications(),
+          transactionService.getRecentTransactions(),
+          loanService.getLoanProducts()
+        ]);
 
-      setAccounts(accountData);
-      setNotifications(notificationData);
-      setTransactions(txData);
-      setLoanProducts(loanData);
+        setAccounts(accountData);
+        setNotifications(notificationData);
+        setTransactions(txData);
+        setLoanProducts(loanData);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
@@ -34,6 +39,14 @@ export default function DashboardPage() {
     () => accounts.reduce((sum, account) => sum + Number(account.available_balance || 0), 0),
     [accounts]
   );
+
+  if (loading) {
+    return (
+      <div className="page" style={{ alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+        <p style={{ color: '#5a6884' }}>Loading your financial overview...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="page">
@@ -76,70 +89,82 @@ export default function DashboardPage() {
       <div className="finance-grid">
         <SectionCard title="Savings" subtitle="Member contribution & savings">
           <div className="metric-value">{formatCurrency(24000)}</div>
-          <p style={{ marginTop: 12 }}>Savings account</p>
+          <p style={{ marginTop: 12, color: '#5a6884' }}>Savings account</p>
         </SectionCard>
         <SectionCard title="Loans" subtitle="Current active loan">
           <div className="metric-value">{formatCurrency(12000)}</div>
-          <p style={{ marginTop: 12 }}>Molula-Qhooa</p>
+          <p style={{ marginTop: 12, color: '#5a6884' }}>Molula-Qhooa</p>
         </SectionCard>
         <SectionCard title="Membership" subtitle="Status">
           <div className="metric-value">Active</div>
-          <p style={{ marginTop: 12 }}>Member since 2024</p>
+          <p style={{ marginTop: 12, color: '#5a6884' }}>Member since 2024</p>
         </SectionCard>
       </div>
 
       <div className="grid-2">
         <SectionCard title="Recent activity" subtitle="Latest account movement">
-          <ul className="transaction-list">
-            {transactions.slice(0, 4).map((transaction) => (
-              <li key={transaction.id} className="transaction-item">
-                <div>
-                  <strong>{transaction.description}</strong>
-                  <div style={{ color: '#5a6884', fontSize: 12 }}>{formatDate(transaction.created_at)}</div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 700, color: transaction.direction === 'in' ? '#1ca77b' : '#12233d' }}>
-                    {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
+          {transactions.length > 0 ? (
+            <ul className="transaction-list">
+              {transactions.slice(0, 4).map((transaction) => (
+                <li key={transaction.id} className="transaction-item">
+                  <div>
+                    <strong>{transaction.description}</strong>
+                    <div style={{ color: '#5a6884', fontSize: 12 }}>{formatDate(transaction.created_at)}</div>
                   </div>
-                  <span className={`badge ${transaction.status === 'completed' ? 'success' : 'warning'}`}>{transaction.status}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontWeight: 700, color: transaction.direction === 'in' ? '#1ca77b' : '#12233d' }}>
+                      {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(Math.abs(transaction.amount))}
+                    </div>
+                    <span className={`badge ${transaction.status === 'completed' ? 'success' : 'warning'}`}>{transaction.status}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: '#5a6884' }}>No recent transactions</p>
+          )}
         </SectionCard>
 
         <SectionCard title="Explore Boliba" subtitle="Member products">
-          <ul className="list">
-            {loanProducts.slice(0, 3).map((product) => (
-              <li key={product.id} className="list-item">
-                <div>
-                  <strong>{product.name}</strong>
-                  <div style={{ color: '#5a6884', fontSize: 12 }}>{product.description}</div>
-                </div>
-                <ChevronRight size={16} color="#1E237E" />
-              </li>
-            ))}
-          </ul>
+          {loanProducts.length > 0 ? (
+            <ul className="list">
+              {loanProducts.slice(0, 3).map((product) => (
+                <li key={product.id} className="list-item">
+                  <div>
+                    <strong>{product.name}</strong>
+                    <div style={{ color: '#5a6884', fontSize: 12 }}>{product.description}</div>
+                  </div>
+                  <ChevronRight size={16} color="#1E237E" />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: '#5a6884' }}>No loan products available</p>
+          )}
         </SectionCard>
       </div>
 
       <SectionCard title="Your notifications" subtitle="Unread updates">
-        <ul className="list">
-          {notifications.slice(0, 3).map((notification) => (
-            <li key={notification.id} className="list-item">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div className="icon-chip" style={{ background: notification.read ? 'rgba(26,42,84,0.06)' : 'rgba(0,174,239,0.12)' }}>
-                  {notification.type === 'transaction' ? <PiggyBank size={16} /> : notification.type === 'loan' ? <Landmark size={16} /> : <ShieldCheck size={16} />}
+        {notifications.length > 0 ? (
+          <ul className="list">
+            {notifications.slice(0, 3).map((notification) => (
+              <li key={notification.id} className="list-item">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div className="icon-chip" style={{ background: notification.read ? 'rgba(26,42,84,0.06)' : 'rgba(0,174,239,0.12)' }}>
+                    {notification.type === 'transaction' ? <PiggyBank size={16} /> : notification.type === 'loan' ? <Landmark size={16} /> : <ShieldCheck size={16} />}
+                  </div>
+                  <div>
+                    <strong>{notification.title}</strong>
+                    <div style={{ color: '#5a6884', fontSize: 12 }}>{notification.message}</div>
+                  </div>
                 </div>
-                <div>
-                  <strong>{notification.title}</strong>
-                  <div style={{ color: '#5a6884', fontSize: 12 }}>{notification.message}</div>
-                </div>
-              </div>
-              {!notification.read ? <span className="badge info">New</span> : <span className="badge success">Read</span>}
-            </li>
-          ))}
-        </ul>
+                {!notification.read ? <span className="badge info">New</span> : <span className="badge success">Read</span>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ color: '#5a6884' }}>No notifications</p>
+        )}
       </SectionCard>
     </div>
   );
