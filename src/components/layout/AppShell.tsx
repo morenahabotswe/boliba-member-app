@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Bell, CreditCard, FileText, Home, Landmark, LogOut, MoreHorizontal, PiggyBank, Send, UserRound } from 'lucide-react';
+import { Bell, CreditCard, FileText, HeartHandshake, Home, Landmark, LogOut, MoreHorizontal, PiggyBank, Send, Smartphone, UserRound } from 'lucide-react';
 import BrandLogo from '@/components/common/BrandLogo';
 
 const navItems = [
@@ -8,6 +8,8 @@ const navItems = [
   { to: '/transfers', label: 'Transfers', icon: Send },
   { to: '/loans', label: 'Loans', icon: Landmark },
   { to: '/savings', label: 'Savings', icon: PiggyBank },
+  { to: '/funeral-schemes', label: 'Funeral', icon: HeartHandshake },
+  { to: '/digital-services', label: 'Digital', icon: Smartphone },
   { to: '/statements', label: 'Statements', icon: FileText },
   { to: '/notifications', label: 'Notifications', icon: Bell },
   { to: '/profile', label: 'Profile', icon: UserRound },

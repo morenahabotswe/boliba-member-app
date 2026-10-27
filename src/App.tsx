@@ -6,6 +6,8 @@ import AccountsPage from '@/pages/AccountsPage';
 import TransfersPage from '@/pages/TransfersPage';
 import LoansPage from '@/pages/LoansPage';
 import SavingsPage from '@/pages/SavingsPage';
+import FuneralSchemesPage from '@/pages/FuneralSchemesPage';
+import DigitalServicesPage from '@/pages/DigitalServicesPage';
 import StatementsPage from '@/pages/StatementsPage';
 import NotificationsPage from '@/pages/NotificationsPage';
 import ProfilePage from '@/pages/ProfilePage';
@@ -28,6 +30,8 @@ export default function App() {
           <Route path="/transfers" element={<TransfersPage />} />
           <Route path="/loans" element={<LoansPage />} />
           <Route path="/savings" element={<SavingsPage />} />
+          <Route path="/funeral-schemes" element={<FuneralSchemesPage />} />
+          <Route path="/digital-services" element={<DigitalServicesPage />} />
           <Route path="/statements" element={<StatementsPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/profile" element={<ProfilePage />} />

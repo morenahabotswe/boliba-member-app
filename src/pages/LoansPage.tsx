@@ -11,7 +11,7 @@ export default function LoansPage() {
   useEffect(() => {
     void (async () => {
       const [loanProducts, active] = await Promise.all([loanService.getLoanProducts(), loanService.getActiveLoans()]);
-      setProducts(loanProducts);
+      setProducts(loanProducts.filter((product) => !['Fixed Deposit / Sebota', 'Sesiu Voluntary Investment', 'Funeral Scheme', 'Molula Qhooa'].includes(product.name)));
       setActiveLoans(active);
     })();
   }, []);

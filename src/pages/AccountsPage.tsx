@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, TrendingDown, TrendingUp } from 'lucide-react';
+import { Banknote, Plus, ShieldCheck } from 'lucide-react';
 import SectionCard from '@/components/common/SectionCard';
 import { accountService } from '@/services/accountService';
 import { formatCurrency } from '@/lib/format';
@@ -13,6 +13,8 @@ export default function AccountsPage() {
       setAccounts(data);
     })();
   }, []);
+
+  const totalBalance = accounts.reduce((sum, account) => sum + Number(account.available_balance || 0), 0);
 
   return (
     <div className="page">
@@ -28,17 +30,17 @@ export default function AccountsPage() {
         <div className="metric-card">
           <h3>Total balance</h3>
           <p>Across all active accounts</p>
-          <div className="metric-value">{formatCurrency(accounts.reduce((sum, account) => sum + Number(account.available_balance || 0), 0))}</div>
+          <div className="metric-value">{formatCurrency(totalBalance)}</div>
         </div>
         <div className="metric-card">
-          <h3>Cash in</h3>
-          <p>Incoming this month</p>
-          <div className="metric-value" style={{ color: '#1ca77b' }}>{formatCurrency(14500)}</div>
+          <h3>Active accounts</h3>
+          <p>Available to you now</p>
+          <div className="metric-value" style={{ color: '#1ca77b' }}>{accounts.length}</div>
         </div>
         <div className="metric-card">
-          <h3>Withdrawals</h3>
-          <p>Outgoing this month</p>
-          <div className="metric-value" style={{ color: '#d94d5c' }}>{formatCurrency(8250)}</div>
+          <h3>Products</h3>
+          <p>Member account options</p>
+          <div className="metric-value" style={{ color: '#12233d' }}>3</div>
         </div>
       </div>
 
@@ -47,8 +49,9 @@ export default function AccountsPage() {
           {accounts.map((account) => (
             <li key={account.id} className="list-item" style={{ alignItems: 'flex-start' }}>
               <div>
-                <strong>{account.account_number}</strong>
-                <div style={{ color: '#5a6884', fontSize: 12 }}>{account.account_type} • {account.currency}</div>
+                <strong>{account.account_name}</strong>
+                <div style={{ color: '#5a6884', fontSize: 12 }}>{account.account_label} • {account.currency}</div>
+                <div style={{ color: '#5a6884', fontSize: 12, marginTop: 4 }}>{account.description}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontWeight: 800 }}>{formatCurrency(account.available_balance)}</div>
