@@ -1,3 +1,5 @@
+const DEMO_EMAIL = 'demo@boliba.co.ls';
+const DEMO_PASSWORD = 'demo1234';
 const DEMO_SESSION_KEY = 'boliba-demo-session';
 
 const getDemoSession = () => {
@@ -8,7 +10,7 @@ const getDemoSession = () => {
         session: {
           user: {
             id: 'demo-user',
-            email: 'demo@boliba.co.ls',
+            email: DEMO_EMAIL,
             name: 'Demo Member'
           }
         }
@@ -24,7 +26,7 @@ const getDemoSession = () => {
         session: {
           user: {
             id: 'demo-user',
-            email: user.email || 'demo@boliba.co.ls',
+            email: user.email || DEMO_EMAIL,
             name: user.name || 'Demo Member'
           }
         }
@@ -37,7 +39,7 @@ const getDemoSession = () => {
         session: {
           user: {
             id: 'demo-user',
-            email: 'demo@boliba.co.ls',
+            email: DEMO_EMAIL,
             name: 'Demo Member'
           }
         }
@@ -49,14 +51,25 @@ const getDemoSession = () => {
 
 export const authService = {
   async signInWithEmail(email: string, password: string) {
-    const safeEmail = email || 'demo@boliba.co.ls';
+    const safeEmail = (email || '').trim().toLowerCase();
+    const safePassword = password || '';
+
+    if (safeEmail !== DEMO_EMAIL || safePassword !== DEMO_PASSWORD) {
+      return {
+        data: null,
+        error: {
+          message: 'Invalid demo credentials. Use demo@boliba.co.ls / demo1234.'
+        }
+      };
+    }
+
     const user = {
       id: 'demo-user',
-      email: safeEmail,
+      email: DEMO_EMAIL,
       name: 'Demo Member'
     };
 
-    localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify({ email: safeEmail, name: user.name, password }));
+    localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify({ email: DEMO_EMAIL, name: user.name, password: DEMO_PASSWORD }));
 
     return {
       data: { user },
