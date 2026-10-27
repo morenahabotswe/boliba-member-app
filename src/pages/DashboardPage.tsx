@@ -87,13 +87,13 @@ export default function DashboardPage() {
       </SectionCard>
 
       <div className="finance-grid">
-        <SectionCard title="Savings" subtitle="Member contribution & savings">
+        <SectionCard title="Savings & Investments" subtitle="Member contribution & savings">
           <div className="metric-value">{formatCurrency(24000)}</div>
-          <p style={{ marginTop: 12, color: '#5a6884' }}>Savings account</p>
+          <p style={{ marginTop: 12, color: '#5a6884' }}>General Savings / Current Account</p>
         </SectionCard>
         <SectionCard title="Loans" subtitle="Current active loan">
           <div className="metric-value">{formatCurrency(12000)}</div>
-          <p style={{ marginTop: 12, color: '#5a6884' }}>Molula-Qhooa</p>
+          <p style={{ marginTop: 12, color: '#5a6884' }}>Molula Qhooa</p>
         </SectionCard>
         <SectionCard title="Membership" subtitle="Status">
           <div className="metric-value">Active</div>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
               ))}
             </ul>
           ) : (
-            <p style={{ color: '#5a6884' }}>No loan products available</p>
+            <p style={{ color: '#5a6884' }}>No products available</p>
           )}
         </SectionCard>
       </div>
