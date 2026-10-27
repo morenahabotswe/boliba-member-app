@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, ChevronRight, PiggyBank, Send, TrendingUp, Wallet, Landmark, ShieldCheck, ArrowRight } from 'lucide-react';
 import BalanceCard from '@/components/common/BalanceCard';
 import SectionCard from '@/components/common/SectionCard';
@@ -9,6 +10,7 @@ import { loanService } from '@/services/loanService';
 import { formatCurrency, formatDate } from '@/lib/format';
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const [accounts, setAccounts] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -40,6 +42,19 @@ export default function DashboardPage() {
     [accounts]
   );
 
+  const handleProductClick = (product: { name: string }) => {
+    const name = product.name.toLowerCase();
+    if (name.includes('funeral')) return navigate('/funeral-schemes');
+    if (name.includes('fixed') || name.includes('sesiu') || name.includes('molula') || name.includes('savings')) return navigate('/savings');
+    return navigate('/loans');
+  };
+
+  const handleMarkRead = async (id: string) => {
+    const updated = notifications.map((item) => item.id === id ? { ...item, read: true } : item);
+    setNotifications(updated);
+    await notificationService.markNotificationRead(id);
+  };
+
   if (loading) {
     return (
       <div className="page" style={{ alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
@@ -56,7 +71,7 @@ export default function DashboardPage() {
           <h1 className="page-title">Here&apos;s your Boliba financial overview.</h1>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button className="ghost-btn" aria-label="View notifications">
+          <button type="button" className="ghost-btn" aria-label="View notifications" onClick={() => navigate('/notifications')}>
             <Bell size={18} />
           </button>
           <div className="brand-mark" style={{ width: 38, height: 38 }}>M</div>
@@ -67,19 +82,19 @@ export default function DashboardPage() {
 
       <SectionCard title="Quick actions">
         <div className="quick-actions-grid">
-          <button className="tile-card" onClick={() => window.location.href = '/accounts'} style={{ textAlign: 'left' }}>
+          <button type="button" className="tile-card" onClick={() => navigate('/accounts')} style={{ textAlign: 'left' }}>
             <div className="icon-chip"><Wallet size={18} /></div>
             <div><strong>Check Balance</strong></div>
           </button>
-          <button className="tile-card" onClick={() => window.location.href = '/transfers'} style={{ textAlign: 'left' }}>
+          <button type="button" className="tile-card" onClick={() => navigate('/transfers')} style={{ textAlign: 'left' }}>
             <div className="icon-chip"><Send size={18} /></div>
             <div><strong>Transfer Money</strong></div>
           </button>
-          <button className="tile-card" onClick={() => window.location.href = '/loans'} style={{ textAlign: 'left' }}>
+          <button type="button" className="tile-card" onClick={() => navigate('/loans')} style={{ textAlign: 'left' }}>
             <div className="icon-chip"><Landmark size={18} /></div>
             <div><strong>Apply for a Loan</strong></div>
           </button>
-          <button className="tile-card" onClick={() => window.location.href = '/notifications'} style={{ textAlign: 'left' }}>
+          <button type="button" className="tile-card" onClick={() => navigate('/notifications')} style={{ textAlign: 'left' }}>
             <div className="icon-chip"><Bell size={18} /></div>
             <div><strong>Notifications</strong></div>
           </button>
@@ -128,8 +143,8 @@ export default function DashboardPage() {
         <SectionCard title="Explore Boliba" subtitle="Member products">
           {loanProducts.length > 0 ? (
             <ul className="list">
-              {loanProducts.slice(0, 3).map((product) => (
-                <li key={product.id} className="list-item">
+              {loanProducts.slice(0, 4).map((product) => (
+                <li key={product.id} className="list-item" onClick={() => handleProductClick(product)} style={{ cursor: 'pointer' }}>
                   <div>
                     <strong>{product.name}</strong>
                     <div style={{ color: '#5a6884', fontSize: 12 }}>{product.description}</div>
@@ -148,7 +163,7 @@ export default function DashboardPage() {
         {notifications.length > 0 ? (
           <ul className="list">
             {notifications.slice(0, 3).map((notification) => (
-              <li key={notification.id} className="list-item">
+              <li key={notification.id} className="list-item" onClick={() => handleMarkRead(notification.id)} style={{ cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div className="icon-chip" style={{ background: notification.read ? 'rgba(26,42,84,0.06)' : 'rgba(0,174,239,0.12)' }}>
                     {notification.type === 'transaction' ? <PiggyBank size={16} /> : notification.type === 'loan' ? <Landmark size={16} /> : <ShieldCheck size={16} />}

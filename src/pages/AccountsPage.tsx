@@ -6,15 +6,18 @@ import { formatCurrency } from '@/lib/format';
 
 export default function AccountsPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
       const data = await accountService.getAccounts();
       setAccounts(data);
+      setSelectedAccountId(data[0]?.id ?? null);
     })();
   }, []);
 
   const totalBalance = accounts.reduce((sum, account) => sum + Number(account.available_balance || 0), 0);
+  const selectedAccount = accounts.find((account) => account.id === selectedAccountId) ?? accounts[0];
 
   return (
     <div className="page">
@@ -23,7 +26,7 @@ export default function AccountsPage() {
           <p className="page-subtitle" style={{ margin: 0 }}>Your accounts</p>
           <h1 className="page-title">Accounts overview</h1>
         </div>
-        <button className="primary-btn"><Plus size={16} /> Add account</button>
+        <button type="button" className="primary-btn"><Plus size={16} /> Add account</button>
       </header>
 
       <div className="kpi-grid">
@@ -47,7 +50,7 @@ export default function AccountsPage() {
       <SectionCard title="Account list">
         <ul className="list">
           {accounts.map((account) => (
-            <li key={account.id} className="list-item" style={{ alignItems: 'flex-start' }}>
+            <li key={account.id} className="list-item" style={{ alignItems: 'flex-start', cursor: 'pointer' }} onClick={() => setSelectedAccountId(account.id)}>
               <div>
                 <strong>{account.account_name}</strong>
                 <div style={{ color: '#5a6884', fontSize: 12 }}>{account.account_label} • {account.currency}</div>
@@ -57,13 +60,23 @@ export default function AccountsPage() {
                 <div style={{ fontWeight: 800 }}>{formatCurrency(account.available_balance)}</div>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
                   <span className="badge success">{account.status}</span>
-                  <button className="secondary-btn" style={{ padding: '8px 10px' }}>View</button>
+                  <button type="button" className="secondary-btn" style={{ padding: '8px 10px' }} onClick={(event) => { event.stopPropagation(); setSelectedAccountId(account.id); }}>View</button>
                 </div>
               </div>
             </li>
           ))}
         </ul>
       </SectionCard>
+
+      {selectedAccount ? (
+        <SectionCard title="Selected account details" subtitle={selectedAccount.account_name}>
+          <div style={{ display: 'grid', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><Banknote size={18} color="#1E237E" /> Account number: {selectedAccount.account_number}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><ShieldCheck size={18} color="#1E237E" /> Status: {selectedAccount.status}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><Banknote size={18} color="#1E237E" /> Available balance: {formatCurrency(selectedAccount.available_balance)}</div>
+          </div>
+        </SectionCard>
+      ) : null}
     </div>
   );
 }

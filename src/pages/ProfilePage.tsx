@@ -1,7 +1,19 @@
+import { useState } from 'react';
 import { Camera, Lock, Save, ShieldCheck, UserRound } from 'lucide-react';
 import SectionCard from '@/components/common/SectionCard';
 
 export default function ProfilePage() {
+  const [profile, setProfile] = useState({
+    firstName: 'Mpho',
+    lastName: 'Mokoena',
+    phone: '+266 59001234'
+  });
+  const [status, setStatus] = useState('');
+
+  const handleSave = () => {
+    setStatus('Profile updated successfully.');
+  };
+
   return (
     <div className="page">
       <header className="section-header">
@@ -16,17 +28,18 @@ export default function ProfilePage() {
           <div className="form">
             <div className="field">
               <label htmlFor="firstName">First name</label>
-              <input id="firstName" defaultValue="Mpho" />
+              <input id="firstName" value={profile.firstName} onChange={(e) => setProfile((prev) => ({ ...prev, firstName: e.target.value }))} />
             </div>
             <div className="field">
               <label htmlFor="lastName">Last name</label>
-              <input id="lastName" defaultValue="Mokoena" />
+              <input id="lastName" value={profile.lastName} onChange={(e) => setProfile((prev) => ({ ...prev, lastName: e.target.value }))} />
             </div>
             <div className="field">
               <label htmlFor="phone">Phone</label>
-              <input id="phone" defaultValue="+266 59001234" />
+              <input id="phone" value={profile.phone} onChange={(e) => setProfile((prev) => ({ ...prev, phone: e.target.value }))} />
             </div>
-            <button className="primary-btn"><Save size={16} /> Save changes</button>
+            <button type="button" className="primary-btn" onClick={handleSave}><Save size={16} /> Save changes</button>
+            {status ? <div className="badge success" style={{ width: 'fit-content' }}>{status}</div> : null}
           </div>
         </SectionCard>
 

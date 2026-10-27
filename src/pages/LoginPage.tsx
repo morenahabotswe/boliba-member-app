@@ -1,11 +1,13 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('demo@boliba.co.ls');
   const [password, setPassword] = useState('demo1234');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -15,7 +17,12 @@ export default function LoginPage() {
     }
 
     setError('');
-    window.location.href = '/dashboard';
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      navigate('/dashboard');
+    }, 300);
   };
 
   return (
@@ -41,8 +48,11 @@ export default function LoginPage() {
 
           {error ? <div className="badge danger" style={{ width: 'fit-content' }}>{error}</div> : null}
 
-          <button className="primary-btn" type="submit">Login <ArrowRight size={16} style={{ marginLeft: 6 }} /></button>
-          <Link to="/onboarding" className="secondary-btn" style={{ textAlign: 'center', display: 'inline-block' }}>Create member account</Link>
+          <button className="primary-btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in...' : 'Login'}
+            <ArrowRight size={16} style={{ marginLeft: 6 }} />
+          </button>
+          <button type="button" className="secondary-btn" onClick={() => navigate('/onboarding')}>Create member account</button>
         </form>
 
         <div style={{ marginTop: 18, display: 'grid', gap: 12 }}>

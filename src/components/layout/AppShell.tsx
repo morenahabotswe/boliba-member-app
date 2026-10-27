@@ -21,7 +21,7 @@ const mobileNavItems = [
   { to: '/accounts', label: 'Accounts', icon: CreditCard },
   { to: '/transfers', label: 'Transfer', icon: Send },
   { to: '/loans', label: 'Loans', icon: Landmark },
-  { to: '/more', label: 'More', icon: MoreHorizontal }
+  { to: '/digital-services', label: 'More', icon: MoreHorizontal }
 ];
 
 export default function AppShell() {

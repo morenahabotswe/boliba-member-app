@@ -1,4 +1,5 @@
-import { HeartHandshake, Smartphone, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { CheckCircle2, Clock3, CreditCard, HeartHandshake, Smartphone, Wallet } from 'lucide-react';
 import SectionCard from '@/components/common/SectionCard';
 
 const funeralSchemes = [
@@ -23,6 +24,8 @@ const funeralSchemes = [
 ];
 
 export default function FuneralSchemesPage() {
+  const [selectedScheme, setSelectedScheme] = useState<string>('ketane');
+
   return (
     <div className="page">
       <header className="section-header">
@@ -53,7 +56,7 @@ export default function FuneralSchemesPage() {
       <SectionCard title="Available plans">
         <ul className="list">
           {funeralSchemes.map((scheme) => (
-            <li key={scheme.id} className="list-item" style={{ alignItems: 'flex-start' }}>
+            <li key={scheme.id} className="list-item" style={{ alignItems: 'flex-start', cursor: 'pointer' }} onClick={() => setSelectedScheme(scheme.id)}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div className="icon-chip"><HeartHandshake size={16} /></div>
                 <div>
@@ -62,7 +65,7 @@ export default function FuneralSchemesPage() {
                   <div style={{ color: '#5a6884', fontSize: 12, marginTop: 6 }}>{scheme.description}</div>
                 </div>
               </div>
-              <span className="badge success">Available</span>
+              <span className={`badge ${selectedScheme === scheme.id ? 'success' : 'info'}`}>{selectedScheme === scheme.id ? 'Selected' : 'Available'}</span>
             </li>
           ))}
         </ul>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Landmark, PiggyBank, ShieldCheck, Wallet } from 'lucide-react';
+import { Landmark, PiggyBank, ShieldCheck } from 'lucide-react';
 import SectionCard from '@/components/common/SectionCard';
 import { accountService } from '@/services/accountService';
 import { formatCurrency } from '@/lib/format';
@@ -14,20 +14,22 @@ const savingsProducts = [
 
 export default function SavingsPage() {
   const [savings, setSavings] = useState<any[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
       const accountData = await accountService.getAccounts();
-      setSavings(
-        savingsProducts.map((product) => {
-          const matched = accountData.find((account) => account.account_name === product.name);
-          return {
-            ...product,
-            balance: matched?.available_balance ?? product.balance,
-            status: matched?.status ?? product.status
-          };
-        })
-      );
+      const productList = savingsProducts.map((product) => {
+        const matched = accountData.find((account) => account.account_name === product.name);
+        return {
+          ...product,
+          balance: matched?.available_balance ?? product.balance,
+          status: matched?.status ?? product.status
+        };
+      });
+
+      setSavings(productList);
+      setSelectedId(productList[0]?.id ?? null);
     })();
   }, []);
 
@@ -35,6 +37,8 @@ export default function SavingsPage() {
     () => savings.reduce((sum, item) => sum + Number(item.balance ?? 0), 0),
     [savings]
   );
+
+  const selectedProduct = savings.find((item) => item.id === selectedId) ?? savings[0];
 
   return (
     <div className="page">
@@ -63,7 +67,7 @@ export default function SavingsPage() {
       <SectionCard title="Your savings products">
         <ul className="list">
           {savings.map((saving) => (
-            <li key={saving.id} className="list-item">
+            <li key={saving.id} className="list-item" style={{ cursor: 'pointer' }} onClick={() => setSelectedId(saving.id)}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div className="icon-chip">
                   {saving.type === 'fixed' ? <Landmark size={16} /> : saving.type === 'goal' ? <ShieldCheck size={16} /> : <PiggyBank size={16} />}
@@ -75,12 +79,22 @@ export default function SavingsPage() {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontWeight: 800 }}>{formatCurrency(saving.balance)}</div>
-                <button className="secondary-btn" style={{ marginTop: 8, padding: '8px 12px' }}>View</button>
+                <button type="button" className="secondary-btn" style={{ marginTop: 8, padding: '8px 12px' }} onClick={(event) => { event.stopPropagation(); setSelectedId(saving.id); }}>View</button>
               </div>
             </li>
           ))}
         </ul>
       </SectionCard>
+
+      {selectedProduct ? (
+        <SectionCard title="Selected savings product" subtitle={selectedProduct.name}>
+          <div style={{ display: 'grid', gap: 10 }}>
+            <div><strong>Balance:</strong> {formatCurrency(selectedProduct.balance)}</div>
+            <div><strong>Status:</strong> {selectedProduct.status}</div>
+            <button type="button" className="primary-btn" onClick={() => setSelectedId(selectedProduct.id)}>Open product</button>
+          </div>
+        </SectionCard>
+      ) : null}
     </div>
   );
 }

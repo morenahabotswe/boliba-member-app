@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, BadgeCheck, Sparkles } from 'lucide-react';
+import { BadgeCheck, Sparkles } from 'lucide-react';
 import SectionCard from '@/components/common/SectionCard';
 import { loanService } from '@/services/loanService';
 import { formatCurrency } from '@/lib/format';
@@ -7,14 +7,19 @@ import { formatCurrency } from '@/lib/format';
 export default function LoansPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [activeLoans, setActiveLoans] = useState<any[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
       const [loanProducts, active] = await Promise.all([loanService.getLoanProducts(), loanService.getActiveLoans()]);
-      setProducts(loanProducts.filter((product) => !['Fixed Deposit / Sebota', 'Sesiu Voluntary Investment', 'Funeral Scheme', 'Molula Qhooa'].includes(product.name)));
+      const filtered = loanProducts.filter((product) => !['Fixed Deposit / Sebota', 'Sesiu Voluntary Investment', 'Funeral Scheme', 'Molula Qhooa'].includes(product.name));
+      setProducts(filtered);
+      setSelectedProductId(filtered[0]?.id ?? null);
       setActiveLoans(active);
     })();
   }, []);
+
+  const selectedProduct = products.find((product) => product.id === selectedProductId) ?? products[0];
 
   return (
     <div className="page">
@@ -23,19 +28,28 @@ export default function LoansPage() {
           <p className="page-subtitle" style={{ margin: 0 }}>Financial support</p>
           <h1 className="page-title">Loan products</h1>
         </div>
-        <button className="primary-btn">Apply now</button>
+        <button type="button" className="primary-btn">Apply now</button>
       </header>
 
       <div className="kpi-grid">
         {products.map((product) => (
-          <div key={product.id} className="tile-card">
+          <div key={product.id} className="tile-card" style={{ cursor: 'pointer' }} onClick={() => setSelectedProductId(product.id)}>
             <div className="icon-chip"><Sparkles size={18} /></div>
             <h3>{product.name}</h3>
             <p>{product.description}</p>
-            <button className="secondary-btn" style={{ marginTop: 12 }}>Select product</button>
+            <button type="button" className="secondary-btn" style={{ marginTop: 12 }} onClick={(event) => { event.stopPropagation(); setSelectedProductId(product.id); }}>Select product</button>
           </div>
         ))}
       </div>
+
+      {selectedProduct ? (
+        <SectionCard title="Selected loan product" subtitle={selectedProduct.name}>
+          <div style={{ display: 'grid', gap: 10 }}>
+            <div>{selectedProduct.description}</div>
+            <button type="button" className="primary-btn">Start application</button>
+          </div>
+        </SectionCard>
+      ) : null}
 
       <SectionCard title="Active loans" subtitle="Current applications and approved balances">
         <ul className="list">

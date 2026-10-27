@@ -5,6 +5,19 @@ import SectionCard from '@/components/common/SectionCard';
 export default function TransfersPage() {
   const [form, setForm] = useState({ recipient: '', amount: '', reference: '', note: '' });
   const [status, setStatus] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handlePreview = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!form.recipient || !form.amount || Number(form.amount) <= 0) {
+      setStatus('Please enter a valid recipient and amount.');
+      setPreview(null);
+      return;
+    }
+
+    setPreview(`Transfer preview: ${form.recipient} • M ${Number(form.amount).toLocaleString()} • ${form.reference || 'No reference'}`);
+    setStatus('Transfer request is ready for final confirmation.');
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -14,6 +27,7 @@ export default function TransfersPage() {
     }
 
     setStatus('Transfer request created securely and sent to backend validation.');
+    setPreview(null);
   };
 
   return (
@@ -48,7 +62,11 @@ export default function TransfersPage() {
               <textarea id="note" rows={4} value={form.note} onChange={(e) => setForm((prev) => ({ ...prev, note: e.target.value }))} placeholder="Optional message" />
             </div>
 
-            <button type="submit" className="primary-btn">Review transfer <ArrowRight size={16} /></button>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <button type="button" className="secondary-btn" onClick={handlePreview}>Preview transfer</button>
+              <button type="submit" className="primary-btn">Confirm transfer <ArrowRight size={16} /></button>
+            </div>
+            {preview ? <div className="badge info" style={{ width: 'fit-content' }}>{preview}</div> : null}
             {status ? <div className="badge info" style={{ width: 'fit-content' }}>{status}</div> : null}
           </form>
         </SectionCard>

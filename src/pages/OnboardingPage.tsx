@@ -1,6 +1,22 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, ShieldCheck, UserRound } from 'lucide-react';
 
 export default function OnboardingPage() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ memberNumber: '', phone: '' });
+  const [status, setStatus] = useState('');
+
+  const handleContinue = () => {
+    if (!form.memberNumber || !form.phone) {
+      setStatus('Please complete both member number and phone number.');
+      return;
+    }
+
+    setStatus('Member details captured. Redirecting to your dashboard...');
+    setTimeout(() => navigate('/dashboard'), 500);
+  };
+
   return (
     <div className="auth-page">
       <div className="auth-card">
@@ -14,17 +30,18 @@ export default function OnboardingPage() {
         <div className="form">
           <div className="field">
             <label htmlFor="member-number">Member number</label>
-            <input id="member-number" placeholder="00012345" />
+            <input id="member-number" value={form.memberNumber} onChange={(e) => setForm((prev) => ({ ...prev, memberNumber: e.target.value }))} placeholder="00012345" />
           </div>
 
           <div className="field">
             <label htmlFor="phone">Phone number</label>
-            <input id="phone" placeholder="+266 5900 1234" />
+            <input id="phone" value={form.phone} onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))} placeholder="+266 5900 1234" />
           </div>
 
           <div className="badge info" style={{ width: 'fit-content' }}>Your account is not yet linked to Boliba membership.</div>
 
-          <button className="primary-btn" onClick={() => (window.location.href = '/dashboard')}>Continue <ArrowRight size={16} /></button>
+          <button className="primary-btn" type="button" onClick={handleContinue}>Continue <ArrowRight size={16} /></button>
+          {status ? <div className="badge info" style={{ width: 'fit-content' }}>{status}</div> : null}
         </div>
 
         <div style={{ marginTop: 18, display: 'grid', gap: 12 }}>
