@@ -1,64 +1,74 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { Bell, CreditCard, FileText, Home, Landmark, LogOut, MoreHorizontal, PiggyBank, Send, UserRound } from 'lucide-react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, Building2, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { authService } from '@/services/authService';
 
-const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: Home },
-  { to: '/accounts', label: 'Accounts', icon: CreditCard },
-  { to: '/transfers', label: 'Transfers', icon: Send },
-  { to: '/loans', label: 'Loans', icon: Landmark },
-  { to: '/savings', label: 'Savings', icon: PiggyBank },
-  { to: '/statements', label: 'Statements', icon: FileText },
-  { to: '/notifications', label: 'Notifications', icon: Bell },
-  { to: '/profile', label: 'Profile', icon: UserRound },
-  { to: '/login', label: 'Logout', icon: LogOut }
-];
+export default function LoginPage() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('demo@boliba.co.ls');
+  const [password, setPassword] = useState('demo1234');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-const mobileNavItems = [
-  { to: '/dashboard', label: 'Home', icon: Home },
-  { to: '/accounts', label: 'Accounts', icon: CreditCard },
-  { to: '/transfers', label: 'Transfer', icon: Send },
-  { to: '/loans', label: 'Loans', icon: Landmark },
-  { to: '/more', label: 'More', icon: MoreHorizontal }
-];
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-export default function AppShell() {
+    if (!email || !password) {
+      setError('Please enter your email and password.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    const { data, error: signInError } = await authService.signInWithEmail(email, password);
+
+    if (signInError || !data?.user) {
+      setError(signInError?.message || 'Unable to sign in with the provided credentials.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    navigate('/dashboard', { replace: true });
+  };
+
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="sidebar-brand">
-          <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.05em' }}>Boliba UI</div>
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-logo-wrap">
+          <img src="/boliba-logo.svg" alt="Boliba" className="auth-logo" />
         </div>
 
-        <nav className="sidebar-nav" aria-label="Main navigation">
-          {navItems.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Icon size={18} />
-              <span>{label}</span>
-            </NavLink>
-          ))}
-        </nav>
+        <h1 className="auth-title">Welcome back</h1>
+        <p className="auth-subtitle">Demo mode: sign in to the Boliba member portal</p>
 
-        <div className="card" style={{ padding: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-            <PiggyBank size={18} color="#00AEEF" />
-            <strong>Member savings</strong>
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="demo@boliba.co.ls" autoComplete="email" />
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#1E237E' }}>M 24,580.42</div>
+
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
+          </div>
+
+          {error ? <div className="badge danger auth-error">{error}</div> : null}
+
+          <button className="primary-btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in...' : 'Login'}
+            {!isSubmitting ? <ArrowRight size={16} style={{ marginLeft: 6 }} /> : null}
+          </button>
+
+          <Link to="/onboarding" className="secondary-btn auth-link">Create member account</Link>
+        </form>
+
+        <div className="auth-benefits">
+          <div className="auth-benefit"><ShieldCheck size={16} color="#1E237E" /> Demo session enabled without any external service</div>
+          <div className="auth-benefit"><Building2 size={16} color="#1E237E" /> Member onboarding and account flows are stubbed for preview</div>
+          <div className="auth-benefit"><CheckCircle2 size={16} color="#1E237E" /> App is ready to connect to the real system later</div>
         </div>
-      </aside>
-
-      <main className="content-shell">
-        <Outlet />
-      </main>
-
-      <nav className="mobile-nav" aria-label="Mobile navigation">
-        {mobileNavItems.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => (isActive ? 'active' : '')}>
-            <Icon size={18} />
-            <span>{label}</span>
-          </NavLink>
-        ))}
-      </nav>
+      </div>
     </div>
   );
 }
