@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Building2, CheckCircle2, ShieldCheck } from 'lucide-react';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('demo@boliba.co.ls');
+  const [password, setPassword] = useState('demo1234');
   const [error, setError] = useState('');
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -26,12 +26,12 @@ export default function LoginPage() {
         </div>
 
         <h1 style={{ margin: 0, textAlign: 'center', color: '#1E237E' }}>Welcome back</h1>
-        <p style={{ textAlign: 'center', color: '#5a6884', marginBottom: 24 }}>Sign in to your Boliba member portal</p>
+        <p style={{ textAlign: 'center', color: '#5a6884', marginBottom: 24 }}>Demo mode: sign in to the Boliba member portal</p>
 
         <form className="form" onSubmit={handleSubmit}>
           <div className="field">
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+            <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="demo@boliba.co.ls" />
           </div>
 
           <div className="field">
@@ -41,14 +41,14 @@ export default function LoginPage() {
 
           {error ? <div className="badge danger" style={{ width: 'fit-content' }}>{error}</div> : null}
 
-          <button className="primary-btn" type="submit">Login</button>
+          <button className="primary-btn" type="submit">Login <ArrowRight size={16} style={{ marginLeft: 6 }} /></button>
           <Link to="/onboarding" className="secondary-btn" style={{ textAlign: 'center', display: 'inline-block' }}>Create member account</Link>
         </form>
 
         <div style={{ marginTop: 18, display: 'grid', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#0A2A4A' }}><ShieldCheck size={16} color="#1E237E" /> Secure authentication with Supabase</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#0A2A4A' }}><Building2 size={16} color="#1E237E" /> Link to member account and branch</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#0A2A4A' }}><CheckCircle2 size={16} color="#1E237E" /> Protected routes and role-based access</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#0A2A4A' }}><ShieldCheck size={16} color="#1E237E" /> Demo session enabled without any external service</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#0A2A4A' }}><Building2 size={16} color="#1E237E" /> Member onboarding and account flows are stubbed for preview</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: '#0A2A4A' }}><CheckCircle2 size={16} color="#1E237E" /> App is ready to connect to the real system later</div>
         </div>
       </div>
     </div>
