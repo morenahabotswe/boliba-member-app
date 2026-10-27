@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { Bell, CreditCard, FileText, Home, Landmark, LogOut, MoreHorizontal, PiggyBank, Send, UserRound } from 'lucide-react';
+import BrandLogo from '@/components/common/BrandLogo';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: Home },
@@ -26,7 +27,8 @@ export default function AppShell() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.05em' }}>Boliba UI</div>
+          <BrandLogo size={34} alt="Boliba logo" />
+          <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.05em' }}>Boliba</div>
         </div>
 
         <nav className="sidebar-nav" aria-label="Main navigation">
